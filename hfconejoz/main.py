@@ -2,6 +2,7 @@ import os
 import requests
 from flask import Flask, Blueprint, request, jsonify, send_from_directory
 from gradio_client import Client
+from urllib.parse import urlparse
 
 app = Flask(__name__)
 main = Blueprint('main', __name__)
@@ -27,6 +28,9 @@ def process_text():
         client = Client("https://navirobayo-conejoz.hf.space/")
         result = client.predict(input_text, api_name="/predict")
         image_url = result.strip()  # Assuming the result is the image URL as a string
+
+        # Extract the filename from the URL
+        image_filename = os.path.basename(urlparse(image_url).path)
 
         # Download the image from the URL using requests
         response = requests.get(image_url)
