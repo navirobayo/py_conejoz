@@ -34,8 +34,8 @@ def process_text():
         server_image_path = os.path.join(IMAGE_DIR, image_filename)
         shutil.copyfile(local_image_path, server_image_path)
 
-        # Return the URL to access the image
-        image_url = f"/get_image/{image_filename}"
+        # Return the URL to access the image with the correct scheme (https)
+        image_url = request.base_url + f"get_image/{image_filename}"
 
         return jsonify({'image_url': image_url})
 
