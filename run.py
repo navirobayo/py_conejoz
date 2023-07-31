@@ -1,5 +1,3 @@
-# run.py
-from gunicorn.app.wsgiapp import run
+from hfconejoz import create_app
 
-if __name__ == "__main__":
-    run()
+app = create_app
