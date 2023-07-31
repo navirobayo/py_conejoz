@@ -1,7 +1,6 @@
-from flask import Flask, Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify
 from gradio_client import Client
 
-app = Flask(__name__)
 main = Blueprint('main', __name__)
 
 @main.route('/')
@@ -26,14 +25,3 @@ def process_text():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
-if __name__ == '__main__':
-    # Register the blueprint and run the app
-    app.register_blueprint(main)
-
-    # For local development, use host='localhost'
-    # For public access, use host='0.0.0.0'
-    app.run(host='0.0.0.0', port=8080)
-
-
-
