@@ -3,6 +3,7 @@ import requests
 from flask import Flask, Blueprint, request, jsonify, send_file
 from gradio_client import Client
 import tempfile
+import shutil
 
 app = Flask(__name__)
 main = Blueprint('main', __name__)
@@ -24,19 +25,16 @@ def process_text():
         # Make the API request to the ImageCreator API using gradio_client
         client = Client("https://navirobayo-conejoz.hf.space/")
         result = client.predict(input_text, api_name="/predict")
-        image_url = result.strip()  # Assuming the result is the image URL as a string
+        
+        # Assuming the result is the image file path as a string
+        local_image_path = result.strip()  
 
-        # Fetch the image data using requests
-        response = requests.get(image_url)
-        response.raise_for_status()  # Check for any download errors
-
-        # Save the image locally with a unique filename using tempfile
-        _, temp_filename = tempfile.mkstemp(suffix=".jpg", dir=IMAGE_DIR)
-        with open(temp_filename, 'wb') as f:
-            f.write(response.content)
+        # Copy the image file to the server's images directory
+        _, image_filename = os.path.split(local_image_path)
+        server_image_path = os.path.join(IMAGE_DIR, image_filename)
+        shutil.copyfile(local_image_path, server_image_path)
 
         # Return the URL to access the image
-        image_filename = os.path.basename(temp_filename)
         image_url = f"/get_image/{image_filename}"
 
         return jsonify({'image_url': image_url})
