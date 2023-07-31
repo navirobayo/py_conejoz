@@ -1,6 +1,6 @@
 import os
 import requests
-from flask import Flask, Blueprint, request, jsonify, send_file
+from flask import Flask, Blueprint, request, jsonify, send_from_directory
 from gradio_client import Client
 import tempfile
 
@@ -47,8 +47,7 @@ def process_text():
 # Route to serve the image
 @main.route('/get_image/<filename>')
 def get_image(filename):
-    image_path = os.path.join(IMAGE_DIR, filename)
-    return send_file(image_path)
+    return send_from_directory(IMAGE_DIR, filename)
 
 if __name__ == '__main__':
     # Register the blueprint and run the app
