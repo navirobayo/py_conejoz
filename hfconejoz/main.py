@@ -1,6 +1,6 @@
 import os
 import requests
-from flask import Flask, Blueprint, request, jsonify
+from flask import Flask, Blueprint, request, jsonify, send_from_directory
 from gradio_client import Client
 
 app = Flask(__name__)
@@ -37,10 +37,16 @@ def process_text():
         with open(image_path, 'wb') as f:
             f.write(response.content)
 
-        return jsonify({'image_url': '/images/' + IMAGE_FILENAME})
+        return jsonify({'image_url': '/get_image'})
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+# Route to serve the image
+@main.route('/get_image')
+def get_image():
+    image_path = os.path.join(IMAGE_DIR, IMAGE_FILENAME)
+    return send_from_directory(IMAGE_DIR, IMAGE_FILENAME)
 
 if __name__ == '__main__':
     # Register the blueprint and run the app
