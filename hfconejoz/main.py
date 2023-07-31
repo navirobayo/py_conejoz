@@ -1,8 +1,17 @@
+import os
+import requests  # Import the requests module
 from flask import Flask, Blueprint, request, jsonify
 from gradio_client import Client
 
 app = Flask(__name__)
 main = Blueprint('main', __name__)
+
+# Directory to store the image
+IMAGE_DIR = os.path.join(app.root_path, "images")
+os.makedirs(IMAGE_DIR, exist_ok=True)
+
+# Fixed filename for the image
+IMAGE_FILENAME = "permanent_image.jpg"
 
 @main.route('/')
 def index():
@@ -19,10 +28,12 @@ def process_text():
         result = client.predict(input_text, api_name="/predict")
         image_url = result.strip()  # Assuming the result is the image URL as a string
 
-        if image_url:
-            return jsonify({'image_url': image_url})
+        # Save the image with the fixed filename
+        image_path = os.path.join(IMAGE_DIR, IMAGE_FILENAME)
+        with open(image_path, 'wb') as f:
+            f.write(requests.get(image_url).content)
 
-        return jsonify({'error': 'Image creation failed'}), 500
+        return jsonify({'image_url': '/images/' + IMAGE_FILENAME})
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
