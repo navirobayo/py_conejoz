@@ -1,5 +1,5 @@
 import os
-import requests  # Import the requests module
+import requests
 from flask import Flask, Blueprint, request, jsonify
 from gradio_client import Client
 
@@ -28,10 +28,14 @@ def process_text():
         result = client.predict(input_text, api_name="/predict")
         image_url = result.strip()  # Assuming the result is the image URL as a string
 
+        # Download the image from the URL using requests
+        response = requests.get(image_url)
+        response.raise_for_status()  # Check for any download errors
+
         # Save the image with the fixed filename
         image_path = os.path.join(IMAGE_DIR, IMAGE_FILENAME)
         with open(image_path, 'wb') as f:
-            f.write(requests.get(image_url).content)
+            f.write(response.content)
 
         return jsonify({'image_url': '/images/' + IMAGE_FILENAME})
 
