@@ -1,6 +1,6 @@
 import os
 import requests
-from flask import Flask, Blueprint, request, jsonify, send_file
+from flask import Flask, Blueprint, request, jsonify, send_file, url_for
 from gradio_client import Client
 import tempfile
 import shutil
@@ -35,7 +35,7 @@ def process_text():
         shutil.copyfile(local_image_path, server_image_path)
 
         # Return the URL to access the image with the correct scheme (https)
-        image_url = request.base_url + f"get_image/{image_filename}"
+        image_url = url_for('main.get_image', filename=image_filename, _external=True)
 
         return jsonify({'image_url': image_url})
 
@@ -54,3 +54,4 @@ if __name__ == '__main__':
     # For local development, use host='localhost'
     # For public access, use host='0.0.0.0'
     app.run(host='0.0.0.0', port=8080)
+
